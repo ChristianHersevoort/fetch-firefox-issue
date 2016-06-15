@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Fetch error example</title>  </head>
+  <body>
+    <h2>This is page 1, redirecting in 2 seconds. POST finishes in 5 seconds</h2>
+    <script type="text/javascript">
+      window.onload = function() {
+        fetch('http://localhost:8081', {
+          method: 'POST',
+          body: "This is the body",
+        })
+        .then((response) => console.info("Server says:", response))
+        .catch((error) => console.error(error));
+        setTimeout(function() {
+          window.location = "http://localhost:8081/another-page.html";
+        }, 2000);
+      };
+    </script>
+  </body>
+</html>
