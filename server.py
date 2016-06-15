@@ -9,10 +9,12 @@ try:
     from SocketServer import ThreadingMixIn
     from SimpleHTTPServer import SimpleHTTPRequestHandler
     from BaseHTTPServer import HTTPServer
+    from urlparse import urlparse
 except ImportError:
     # Python 3.x
     from socketserver import ThreadingMixIn
     from http.server import SimpleHTTPRequestHandler, HTTPServer
+    from urllib.parse import urlparse
 
 class ThreadingSimpleServer(ThreadingMixIn, HTTPServer):
     pass
@@ -28,6 +30,14 @@ class SlowPostRequestHandler(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(bytes("Hello world!", "utf8"))
         return
+
+  def do_GET(self):
+        parsedParams =  urlparse(self.path)
+        print(parsedParams.path);
+        if(parsedParams.path == '/another-page.html'):
+            # Sleep for 2 seconds just to trigger the bug
+            time.sleep(2)   
+        return SimpleHTTPRequestHandler.do_GET(self);
 
 if __name__ == '__main__':
     server = ThreadingSimpleServer(('localhost', 8081), SlowPostRequestHandler)

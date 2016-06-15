@@ -2,9 +2,17 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Fetch error example</title>  </head>
+    <title>Fetch error example</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  </head>
   <body>
     <h2>This is page 1, redirecting in 2 seconds. POST finishes in 5 seconds</h2>
+    <div id="jq-error" style="background-color:red; display:none;">
+      <h2>Error in jQuery</h2>
+    </div>
+    <div id="fetch-error" style="background-color:red; display:none;">
+      <h2>Error in fetch</h2>
+    </div>
     <script type="text/javascript">
       window.onload = function() {
         fetch('http://localhost:8081', {
@@ -12,11 +20,23 @@
           body: "This is the body",
         })
         .then((response) => console.info("Server says:", response))
-        .catch((error) => console.error(error));
+        .catch((error) => {
+          $("#fetch-error").show();
+          console.error("Native fetch:", error);
+        });
         setTimeout(function() {
           window.location = "http://localhost:8081/another-page.html";
         }, 2000);
-      };
+
+        // jQuery
+        $.post( "http://localhost:8081", {b: "the body"}, function() {
+          alert( "success" );
+        })
+        .fail(function(xhr, ajaxOptions, thrownError) {
+          $("#jq-error").show();
+          console.error("jQuery: $.post : ", xhr, ajaxOptions, thrownError);
+        });
+    };
     </script>
   </body>
 </html>
